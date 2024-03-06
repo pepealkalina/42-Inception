@@ -1,0 +1,50 @@
+version: '3.7'
+
+#set up the volumes for the inception where one is for wordpres annd nginx anf the other for mariadb
+volumes:
+  #volume for wordpress and nginx
+  wordpress: 
+    #Define the driver, driver let you to store volumes in remote hosts
+    driver: local #local means that the volumes are created in the same host that we exec the container
+    #Define The driver options
+    driver_opts:
+      type: none #the filesytem type to use in the volume
+      device: /Users/preina-g/Desktop/inception/srcs/wordpress #set the path where we connect the container
+      o: bind
+
+  #volume for mariadb
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      device: /Users/preina-g/Desktop/inception/srcs/mariadb
+      o: bind
+   
+networks:
+  inception:
+    name: inception
+
+services:
+  #set nginx sevice
+  nginx:
+    build: ./requirements/nginx #set where the Dockerfile will build
+    image: preina-g_inception_nginx #set the image name
+    #depends_on: #set that the service depend of the service wordpress
+    #  - wordpress
+    volumes: #set that the volume to connect is wordpress and the folder inside the containeer is /var/www/html for web config
+      - wordpress:/var/www/html
+    ports: #set the por where the machine is listening
+      - 433:433
+    # env_file: #set the env_file to take the enviroment variables
+    #   - ./.env
+    networks: 
+      - inception
+    restart: always # restart the machine always that it needed
+  wordpress:
+    volumes:
+  
+  mariadb:
+    volumes:
+      
+  
+  
