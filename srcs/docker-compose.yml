@@ -9,16 +9,16 @@ volumes:
     #Define The driver options
     driver_opts:
       type: none #the filesytem type to use in the volume
-      device: /Users/preina-g/Desktop/inception/srcs/wordpress #set the path where we connect the container
+      device: /Users/pepealkalina/Desktop/42-Inception/srcs/requirements/wordpress #set the path where we connect the container
       o: bind
 
   #volume for mariadb
-  mariadb:
-    driver: local
-    driver_opts:
-      type: none
-      device: /Users/preina-g/Desktop/inception/srcs/mariadb
-      o: bind
+  # mariadb:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device: /Users/preina-g/Desktop/inception/srcs/mariadb
+  #     o: bind
    
 networks:
   inception:
@@ -29,22 +29,31 @@ services:
   nginx:
     build: ./requirements/nginx #set where the Dockerfile will build
     image: preina-g_inception_nginx #set the image name
-    #depends_on: #set that the service depend of the service wordpress
-    #  - wordpress
+    depends_on: #set that the service depend of the service wordpress
+      - wordpress
     volumes: #set that the volume to connect is wordpress and the folder inside the containeer is /var/www/html for web config
       - wordpress:/var/www/html
     ports: #set the por where the machine is listening
-      - 433:433
+      - 443:443
     # env_file: #set the env_file to take the enviroment variables
     #   - ./.env
     networks: 
       - inception
-    restart: always # restart the machine always that it needed
+    restart: on-failure[:10] # restart the machine always that it needed
+  #set wordpress service
   wordpress:
-    volumes:
+    build: ./requirements/wordpress #set where the Dockerfile will build
+    image: preina-g_inception_wordpress #set the image name
+    #depends_on: #set that the service depend of the service wordpress
+    #  - wordpress
+    volumes: #set that the volume to connect is wordpress and the folder inside the containeer is /var/www/html for web config
+      - wordpress:/var/www/html
+    # env_file: #set the env_file to take the enviroment variables
+    #   - ./.env
+    networks: 
+      - inception
+    restart: on-failure[:10] # restart the machine always that it needed
   
-  mariadb:
-    volumes:
-      
-  
-  
+  # mariadb:
+  #   volumes:
+    
