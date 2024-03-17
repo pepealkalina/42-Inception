@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 
 #set up the volumes for the inception where one is for wordpres annd nginx anf the other for mariadb
 volumes:
@@ -9,16 +9,16 @@ volumes:
     #Define The driver options
     driver_opts:
       type: none #the filesytem type to use in the volume
-      device: /Users/pepealkalina/Desktop/42-Inception/srcs/requirements/wordpress #set the path where we connect the container
+      device: /Users/preina-g/Desktop/42-Inception/srcs/requirements/wordpress #set the path where we connect the container
       o: bind
 
   #volume for mariadb
-  # mariadb:
-  #   driver: local
-  #   driver_opts:
-  #     type: none
-  #     device: /Users/preina-g/Desktop/inception/srcs/mariadb
-  #     o: bind
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      device: /Users/preina-g/Desktop/42-Inception/srcs/requirements/mariadb
+      o: bind
    
 networks:
   inception:
@@ -27,9 +27,10 @@ networks:
 services:
   #set nginx sevice
   nginx:
+    container_name: nginx
     build: ./requirements/nginx #set where the Dockerfile will build
     image: preina-g_inception_nginx #set the image name
-    depends_on: #set that the service depend of the service wordpress
+    depends_on:
       - wordpress
     volumes: #set that the volume to connect is wordpress and the folder inside the containeer is /var/www/html for web config
       - wordpress:/var/www/html
@@ -39,11 +40,16 @@ services:
     #   - ./.env
     networks: 
       - inception
-    restart: on-failure[:10] # restart the machine always that it needed
+    env_file:
+      - .env
+    restart: on-failure # restart the machine always that it needed
   #set wordpress service
   wordpress:
+    container_name: wordpress
     build: ./requirements/wordpress #set where the Dockerfile will build
     image: preina-g_inception_wordpress #set the image name
+    depends_on:
+      - mariadb
     #depends_on: #set that the service depend of the service wordpress
     #  - wordpress
     volumes: #set that the volume to connect is wordpress and the folder inside the containeer is /var/www/html for web config
@@ -52,8 +58,22 @@ services:
     #   - ./.env
     networks: 
       - inception
-    restart: on-failure[:10] # restart the machine always that it needed
+    env_file:
+      - .env
+    restart: on-failure # restart the machine always that it needed
   
-  # mariadb:
-  #   volumes:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    image: preina-g_mariadb_wordpress
+    #volumes allow to store in a persistent disk the content in a local disk
+    #db_data is a volume created by docker directly
+    volumes:
+      - mariadb:/var/lib/mysql
+    # in case of problem we restart automatically the container
+    env_file:
+      - .env
+    networks:
+      - inception
+    restart: on-failure
     

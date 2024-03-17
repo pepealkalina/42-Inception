@@ -5,13 +5,14 @@ FROM debian:bullseye
 #the ppackage manager for debian is apt and we use this to install nginx
 RUN apt update && apt upgrade && apt install -y nginx openssl
 
+COPY tools/config_nginx.sh /config_nginx.sh
+
+RUN chmod +x config_nginx.sh
+
 #cambia el fichero conf.d por nginx.conf y establece la configuracion de nginx
-COPY ./conf/default /etc/nginx/sites-available/default
-
-COPY ./tools/config_nginx.sh /
-
-RUN chmod 700 /config_nginx.sh
-
-CMD [ "/config_nginx.sh" ]
+COPY ./conf/default /etc/nginx/sites-available/
 
 EXPOSE 443
+
+ENTRYPOINT [ "/config_nginx.sh" ]
+
