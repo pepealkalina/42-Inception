@@ -27,4 +27,4 @@ else
 	cp wp-config-sample.php wp-config.php
 fi
 
-/usr/sbin/php-fpm7.4 -F
+/usr/sbin/php-fpm7.4 -y /etc/php/7.4/fpm/php-fpm.conf -F

@@ -3,23 +3,23 @@ version: '3'
 #set up the volumes for the inception where one is for wordpres annd nginx anf the other for mariadb
 volumes:
   #volume for wordpress and nginx
-  wordpress: 
+  wordpress_data: 
     #Define the driver, driver let you to store volumes in remote hosts
     driver: local #local means that the volumes are created in the same host that we exec the container
     #Define The driver options
     driver_opts:
       type: none #the filesytem type to use in the volume
-      # device: /Users/preina-g/Desktop/42-Inception/srcs/requirements/wordpress #set the path where we connect the container
-      device: /Users/pepealkalina/Desktop/42-Inception/srcs/requirements/wordpress
+      device: /Users/preina-g/Desktop/42-Inception/srcs/requirements/wordpress #set the path where we connect the container
+      # device: /Users/pepealkalina/Desktop/42-Inception/srcs/requirements/wordpress
       o: bind
 
   #volume for mariadb
-  mariadb:
+  mariadb_data:
     driver: local
     driver_opts:
       type: none
-      # device: /Users/preina-g/Desktop/42-Inception/srcs/requirements/mariadb
-      device: /Users/pepealkalina/Desktop/42-Inception/srcs/requirements/mariadb
+      device: /Users/preina-g/Desktop/42-Inception/srcs/requirements/mariadb
+      # device: /Users/pepealkalina/Desktop/42-Inception/srcs/requirements/mariadb
       o: bind
    
 networks:
@@ -35,7 +35,7 @@ services:
     depends_on:
       - wordpress
     volumes: #set that the volume to connect is wordpress and the folder inside the containeer is /var/www/html for web config
-      - wordpress:/var/www/html
+      - wordpress_data:/var/www/html
     ports: #set the por where the machine is listening
       - 443:443
     # env_file: #set the env_file to take the enviroment variables
@@ -55,7 +55,7 @@ services:
     #depends_on: #set that the service depend of the service wordpress
     #  - wordpress
     volumes: #set that the volume to connect is wordpress and the folder inside the containeer is /var/www/html for web config
-      - wordpress:/var/www/html
+      - wordpress_data:/var/www/html
     # env_file: #set the env_file to take the enviroment variables
     #   - ./.env
     networks: 
@@ -71,7 +71,7 @@ services:
     #volumes allow to store in a persistent disk the content in a local disk
     #db_data is a volume created by docker directly
     volumes:
-      - mariadb:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
     # in case of problem we restart automatically the container
     env_file:
       - .env
